@@ -18,7 +18,7 @@ It implements the **Entity-Component-System (ECS)** pattern with modern C++ feat
 - Efficient storage and fast iteration
 
 Supported C++ versions:  
-![+= C++20](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
+![](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 
 Core goals:
 - 🧩 **Component-oriented** storage with type-safety
