@@ -1,0 +1,50 @@
+name: Build & Publish Docs
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write  # ✅ allow the bot to push to gh-pages
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz \
+          texlive-latex-base texlive-latex-extra \
+          texlive-fonts-recommended
+
+      # 3. Generate docs for main
+      - name: Build Doxygen
+        run: |
+          doxygen docs/Doxyfile
+
+      # 4. Upload docs artifacts
+      - name: Upload latex artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex
+          path: docs/latex
+
+      # 5. Publish HTML(s) to GitHub Pages
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/html
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Update gh-pages $(date +'%Y-%m-%d %S:%M:%H') ${{ github.sha }}"

@@ -23,7 +23,7 @@ class ExampleSystem: public System {
         ExampleSystem(Math& math): _math(math) {};
         ~ExampleSystem() = default;
 
-        void lambda(Registry &r) override {
+        void update(Registry &r) override {
             std::cout << "----- Display Begin -----" << std::endl;
             auto& positions = r.getComponents<Position>();
 

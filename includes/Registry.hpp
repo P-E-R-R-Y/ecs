@@ -2,11 +2,7 @@
  * @file Registry.hpp
  * @author @Perry-chouteau (perry.chouteau@outook.com)
  * @brief 
- * @version 0.1
  * @date 2025-01-27
- * 
- * @addtogroup ecs
- * @{
  */
 
 #ifndef REGISTRY_HPP
