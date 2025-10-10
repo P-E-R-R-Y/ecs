@@ -4,7 +4,7 @@ A modern, lightweight **Entity-Component-System** framework in C++.
 
 [![Build](https://github.com/P-E-R-R-Y/ecs/actions/workflows/cmake.yml/badge.svg)](https://github.com/P-E-R-R-Y/ecs/actions)
 [![Docs](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://p-e-r-r-y.github.io/ecs)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 
 ---
 
@@ -16,9 +16,6 @@ It implements the **Entity-Component-System (ECS)** pattern with modern C++ feat
 - Templates & variadic functions for type safety
 - Optional concepts (C++20) for system constraints
 - Efficient storage and fast iteration
-
-Supported C++ versions:  
-![](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 
 Core goals:
 - 🧩 **Component-oriented** storage with type-safety
