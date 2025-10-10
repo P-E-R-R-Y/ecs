@@ -56,7 +56,7 @@ namespace ecs {
      * @see System
      */
     template<typename T>
-    concept SystemImplementation = std::derived_from<T, ISystem>;
+    concept SystemImplementation = std::derived_from<std::remove_cvref_t<T>, ISystem>;
 
 }
 

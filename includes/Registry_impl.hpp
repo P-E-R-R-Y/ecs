@@ -70,12 +70,12 @@ namespace ecs {
 
     template<SystemImplementation System>
     void Registry::addSystem(System& s) {
-        systems[std::type_index(typeid(System))] = std::unique_ptr<ISystem>(&s, +[](ISystem*){});
+        systems[std::type_index(typeid(System))] = std::shared_ptr<ISystem>(&s, +[](ISystem*){});
     }
 
     template<SystemImplementation System>
     void Registry::addSystem(System&& s) {
-        systems[std::type_index(typeid(System))] = std::make_unique<System>(std::move(s));
+        systems[std::type_index(typeid(System))] = std::make_shared<System>(std::move(s));
     }
 
     template <SystemImplementation... System, typename> // =  std::enable_if_t<(sizeof...(System) >= 1)>
@@ -85,7 +85,7 @@ namespace ecs {
     
     template <SystemImplementation System, typename... Args>
     void Registry::emplaceSystem(Args&&... args) {
-        systems[std::type_index(typeid(System))] = std::make_unique<System>(std::forward<Args>(args)...);
+        systems[std::type_index(typeid(System))] = std::make_shared<System>(std::forward<Args>(args)...);
     }
 
     template <SystemImplementation ... System, typename>

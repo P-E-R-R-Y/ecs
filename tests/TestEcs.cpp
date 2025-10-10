@@ -1,8 +1,11 @@
 /**
- * @file TestRegistry.cpp
+ * @file TestEcs.cpp
  * @author 
  * @brief Unit tests for ecs::Registry implementation using GoogleTest.
  * @date 2025-10-07
+ * 
+ * @example TestEcs.cpp
+ * @{
  */
 
 #include <gtest/gtest.h>
@@ -13,7 +16,10 @@
 
 using namespace ecs;
 
-// --- Components ---
+/**
+ * @brief 2Dvelocity
+ * 
+ */
 struct Velocity {
     int x, y;
     bool operator==(const Velocity& other) const { return x == other.x && y == other.y; }
@@ -22,6 +28,10 @@ struct Velocity {
     }
 };
 
+/**
+ * @brief 2Dposition
+ * 
+ */
 struct Position {
     int x, y;
     
@@ -33,6 +43,10 @@ struct Position {
     }
 };
 
+/**
+ * @brief Health Value
+ * 
+ */
 struct Health {
     int value;
 
@@ -97,6 +111,21 @@ class DisplaySystem: public ISystem {
         Singleton& _s;
 };
 
+class HealthSystem: public ISystem {
+    public:
+        HealthSystem(int time) {}
+
+        void update(Registry &r) override {
+            auto& healths = r.getComponents<Health>();
+
+            for(size_t i = 0; i < healths.size(); ++i) {
+                if (healths[i]) {
+                    std::cout << "entity(" << i << "): " << healths[i].value() << std::endl;
+                }
+            }
+        }
+}; 
+
 // --- Component registration ---
 TEST(RegistryTest, RegisterAndRetrieveComponents) {
     Registry registry;
@@ -135,15 +164,21 @@ TEST(RegistryExtractionTest, Intergration) {
     EXPECT_NO_THROW(registry.getComponents<Health>());
 
     Entity player = registry.createEntity();
+    Entity enemy = registry.createEntity();
 
-    player.addComponent(Position{0, 0}, Velocity{1, 0});
+    Health h{}; 
+
+    player.addComponent(Position{0, 0}, Velocity{1, 0}, h);
+    enemy.addComponent(Health{});
 
     auto&positons = registry.getComponents<Position>();
 
-    registry.addSystem(MoveSystem(), DisplaySystem(s));
+    DisplaySystem ds(s);
+
+    registry.addSystem(MoveSystem(), ds, HealthSystem(0));
 
     EXPECT_EQ(positons[0].value().x, 0);
-    registry.callSystem<DisplaySystem, MoveSystem, DisplaySystem>();
+    registry.callSystem<DisplaySystem, MoveSystem, DisplaySystem, HealthSystem>();
 
     EXPECT_EQ(positons[0].value().x, 1);
 

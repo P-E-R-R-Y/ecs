@@ -214,7 +214,7 @@ namespace ecs {
 
             std::vector<std::function<void(Registry &, Entity const &)>> componentsRemoves;
 
-            std::unordered_map<std::type_index, std::unique_ptr<ISystem>> systems;
+            std::unordered_map<std::type_index, std::shared_ptr<ISystem>> systems;
     };
 
 }
