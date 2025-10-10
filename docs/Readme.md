@@ -18,15 +18,14 @@ It implements the **Entity-Component-System (ECS)** pattern with modern C++ feat
 - Efficient storage and fast iteration
 
 Supported C++ versions:  
-![C++11](https://img.shields.io/badge/C%2B%2B-11-orange.svg)  
-![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
+![+= C++20](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
 
 Core goals:
-- 🧩 **Strongly typed components** using templates  
+- 🧩 **Component-oriented** storage with type-safety
 - ⚡ **Fast lookups** via `SparseArray` and type-based storage  
-- 🔄 **Flexible systems** supporting owned/non-owned objects  
-- 🚀 **Header-only**, **zero dependencies**  
+- 🔄 **Flexible Systems**: can operate on any combination of components
 - ✅ **Unit-tested** with GoogleTest  
+- 🚀 **Header-only**, easy integration
 
 ---
 
@@ -44,40 +43,51 @@ Core goals:
 ## 🧩 Example Usage
 
 ```cpp
+
 #include "Ecs.hpp"
-#include <iostream>
+#include <memory>
 
-// Components
-struct Position { int x, y; };
-struct Velocity { int dx, dy; };
+using namespace ecs;
 
-// System that moves entities with Position + Velocity
-struct MovementSystem : public ISystem {
-    void update(Registry& registry) override {
-        for (auto& [pos, vel] : registry.view<Position, Velocity>()) {
-            pos.x += vel.dx;
-            pos.y += vel.dy;
+struct Velocity { int x, y; };
+struct Position { int x, y; void operator+=(const Velocity& vel) { x += vel.x; y += vel.y; } };
+struct Health { int value; };
+
+// --- Systems ---
+class MoveSystem: public ISystem {
+    public:
+        MoveSystem() {}
+
+        void update(Registry &r) override {
+            auto& positions = r.getComponents<Position>();
+            auto& velocities = r.getComponents<Velocity>();
+
+            for(size_t i = 0; i < positions.size(); ++i) {
+                if (positions[i] && velocities[i])
+                    positions[i].value() += velocities[i].value();
+            }
         }
-    }
 };
 
 int main() {
     Registry registry;
 
-    // Create entity
-    Entity e{0};
-    registry.addComponent(e, Position{10, 20});
-    registry.addComponent(e, Velocity{1, 2});
+    using MyComponents = std::tuple<Position, Velocity, Health /*, ...*/>;
+    registry.registerComponentsByExtraction<MyComponents>(); 
+    //or use registry.registerComponents<Position /*, ...*/>();
 
-    // Add system
-    registry.addSystem(MovementSystem{});
+    Entity player = registry.createEntity();
+    Entity enemy = registry.createEntity();
 
-    // Run system
-    registry.callSystem<MovementSystem>();
+    Health h{100}; 
 
-    // Access updated position
-    auto& pos = registry.getComponents<Position>()[e._idx];
-    std::cout << "Updated Position: (" << pos.x << "," << pos.y << ")\n";
+    player.addComponent(Position{0, 0}, Velocity{1, 0}, h /*, ...*/);
+    registry.addComponent(enemy, Health{50} /*, ...*/);
 
-    return 0;
+    auto&positons = registry.getComponents<Position>();
+
+    registry.addSystem(MoveSystem()/*, ...*/);
+
+    registry.callSystem<MoveSystem/*, ...*/>();
 }
+```

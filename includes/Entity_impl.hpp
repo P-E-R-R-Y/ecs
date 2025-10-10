@@ -29,8 +29,6 @@ namespace ecs {
     void Entity::removeComponent() {
         (_ecs.removeComponent<Component>(*this), ...);
     }
-
-    Entity::Entity(size_t idx, RegistryRef ecs): _idx(idx), _ecs(ecs) {};
 }
 
 #endif // ENTITY_IMPL_HPP

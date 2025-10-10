@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## ----------- Executable -----------
-set(SOURCE_FILES sources/Registry.cpp)
+set(SOURCE_FILES sources/Registry.cpp sources/Entity.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 
