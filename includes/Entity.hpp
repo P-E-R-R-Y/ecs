@@ -12,6 +12,7 @@
 
 //global
 #include <cstddef>
+#include <type_traits>
 
 namespace ecs {
 

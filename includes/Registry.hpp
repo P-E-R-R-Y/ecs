@@ -21,6 +21,7 @@
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
+#include <type_traits>
 #include <memory>
 #include "System.hpp"
 #include "Concepts.hpp"
