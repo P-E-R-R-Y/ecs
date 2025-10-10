@@ -50,15 +50,15 @@ namespace ecs {
              * @tparam Component 
              * @param c 
              */
-            template <class Component>
-            void addComponent(Component&& c);
+            template <typename... Component, typename =  std::enable_if_t<(sizeof...(Component) >= 1)>>
+            void addComponent(Component&& ... c);
 
             /**
              * @brief remove a component from the entity using the registryRef method removeComponent
              * 
              * @tparam Component 
              */
-            template <class Component>
+            template <typename... Component, typename =  std::enable_if_t<(sizeof...(Component) >= 1)>>
             void removeComponent();
 
         private:

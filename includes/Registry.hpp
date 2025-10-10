@@ -26,6 +26,8 @@
 #include <unordered_map>
 #include <typeindex>
 #include <memory>
+#include "System.hpp"
+#include "Concepts.hpp"
 
 namespace ecs {
 
@@ -78,7 +80,7 @@ namespace ecs {
              * @tparam Component 
              * @return SparseArray<Component>& 
              */
-            template <class Component>
+            template <typename Component>
             SparseArray<Component> &registerComponent();
 
             /**
@@ -94,7 +96,7 @@ namespace ecs {
              * 
              * @tparam Tuple 
              */
-            template <class Tuple>
+            template <IsTuple Tuple>
             void registerComponentsByExtraction();
 
             /**
@@ -123,8 +125,8 @@ namespace ecs {
              * @param c
              * @return SparseArray<Component>::reference_type 
              */
-            template <typename Component>
-            typename SparseArray<Component>::reference_type addComponent(Entity const &to, Component &&c);
+            template <typename... Component, typename = std::enable_if_t<(sizeof...(Component) != 0)>>
+            void addComponent(Entity const &to, Component &&...c);
 
             /**
              * @brief emplace a component to the given entity
@@ -136,7 +138,7 @@ namespace ecs {
              * @return SparseArray <Component>::reference_type 
              */
             template <typename Component, typename ... Params>
-            typename SparseArray <Component>::reference_type emplaceComponent(Entity const &to, Params &&... p);
+            void emplaceComponent(Entity const &to, Params &&... p);
 
             /**
              * @brief remove a component from the given entity
@@ -144,21 +146,37 @@ namespace ecs {
              * @tparam Component 
              * @param from 
              */
-            template <typename Component>
+            template <typename... Component, typename = std::enable_if<(sizeof...(Component) != 0)>>
             void removeComponent(Entity const &from);
 
             /// @brief handling systems
+            /**
+             * @brief add lvalue
+             * 
+             * @tparam System 
+             * @param s 
+             */
+            template<SystemImplementation System>
+            void addSystem(System& s);
+
+            /**
+             * @brief add rvalue
+             * 
+             * @tparam move constructor
+             * @param s 
+             */
+            template<SystemImplementation System>
+            void addSystem(System&& s);
 
             /**
              * @brief add a system to the registry
              * 
-             * @tparam T 
-             * @tparam Args 
-             * @param args 
-             * @return size_t 
+             * @tparam ... T 
+             * @tparam control variadic list isn't empty
+             * @param s 
              */
-            template <typename T, typename... Args>
-            size_t addSystem(Args&&... args);
+            template <SystemImplementation... System, typename = std::enable_if<(sizeof...(System) != 0)>>
+            void addSystem(System&& ... s);
 
             /**
              * @brief add a system to the registry
@@ -167,15 +185,15 @@ namespace ecs {
              * @param existingSystem 
              * @return size_t 
              */
-            template <typename T>
-            size_t addSystem(std::unique_ptr<T> existingSystem);
+            template <SystemImplementation System, typename ... Params>
+            void emplaceSystem(Params &&... params);
 
             /**
              * @brief remove a system from the registry
              * 
              * @tparam T 
              */
-            template <typename T>
+            template <SystemImplementation ... System, typename = std::enable_if<(sizeof...(System) != 0)>>
             void removeSystem();
 
             /**
@@ -183,21 +201,8 @@ namespace ecs {
              * 
              * @tparam T 
              */
-            template <typename T>
+            template <SystemImplementation ... System, typename = std::enable_if<(sizeof...(System) != 0)>>
             void callSystem();
-
-            /**
-             * @brief call all systems
-             */
-            void callSystems();
-
-        private:
-
-            template <typename T>
-            struct is_tuple : std::false_type {};
-
-            template <typename... Args>
-            struct is_tuple<std::tuple<Args...>> : std::true_type {};
 
         private:
 
@@ -209,7 +214,7 @@ namespace ecs {
 
             std::vector<std::function<void(Registry &, Entity const &)>> componentsRemoves;
 
-            std::unordered_map<std::type_index, std::unique_ptr<System>> systems;
+            std::unordered_map<std::type_index, std::unique_ptr<ISystem>> systems;
     };
 
 }

@@ -15,6 +15,7 @@
 #include "Registry.hpp"
 #include "Entity.hpp"
 #include "SparseArray.hpp"
+#include "Concepts.hpp"
 
 #include "System.hpp"
 
@@ -32,9 +33,8 @@ namespace ecs {
         (registerComponent<Components>(), ...);
     };
 
-    template <class Tuple>
+    template <IsTuple Tuple>
     void Registry::registerComponentsByExtraction() {
-        static_assert(is_tuple<Tuple>::value, "Extraction must a std::tuple of Components.");
         std::apply([this](auto ... components) {
             this->registerComponents<std::decay_t<decltype(components)>...>();
         }, Tuple{});
@@ -50,56 +50,53 @@ namespace ecs {
         return std::any_cast<SparseArray<Component> &>(componentsArrays.at(std::type_index(typeid(Component))));
     };
 
-    template <typename Component>
-    typename SparseArray<Component>::reference_type Registry::addComponent(Entity const &to, Component &&c) {
-        getComponents<Component>().emplaceAt(to._idx, c);
-        return getComponents<Component>()[to._idx];
-    };
+    template <typename... Component, typename> // =  std::enable_if_t<(sizeof...(Component) >= 1)>
+    void Registry::addComponent(Entity const &to, Component&&... c) {
+        (getComponents<std::remove_reference_t<Component>>().emplaceAt(to._idx, std::forward<Component>(c)), ...);
+    }
 
     template <typename Component, typename ... Params>
-    typename SparseArray <Component>::reference_type Registry::emplaceComponent(Entity const &to, Params &&... p) {
-        getComponents<Component>().emplaceAt(to._idx, p...);
+    void Registry::emplaceComponent(Entity const &to, Params &&... p) {
+        getComponents<Component>().emplaceAt(to._idx, std::forward<Params>(p)...);
         return getComponents<Component>()[to._idx];
     };
 
-    template <typename Component>
+    template <typename ... Component, typename>
     void Registry::removeComponent(Entity const &from) {
-        getComponents<Component>().erase(from._idx);
+        (getComponents<Component>().erase(from._idx), ...);
     };
 
     /// @brief handling systems
 
-    template <typename T, typename... Args>
-    size_t Registry::addSystem(Args&&... args) {
-        static_assert(std::is_base_of<System, T>::value, "T must derive from System");
-        systems[std::type_index(typeid(T))] = std::make_unique<T>(std::forward<Args>(args)...);
-        return systems.size();
+    template<SystemImplementation System>
+    void Registry::addSystem(System& s) {
+        systems[std::type_index(typeid(System))] = std::unique_ptr<ISystem>(&s, +[](ISystem*){});
     }
 
-    template <typename T>
-    size_t Registry::addSystem(std::unique_ptr<T> existingSystem) {
-        static_assert(std::is_base_of<System, T>::value, "T must derive from System");
-        systems[std::type_index(typeid(T))] = std::move(existingSystem);
-        return systems.size();
+    template<SystemImplementation System>
+    void Registry::addSystem(System&& s) {
+        systems[std::type_index(typeid(System))] = std::make_unique<System>(std::move(s));
     }
 
-    template <typename T>
+    template <SystemImplementation... System, typename> // =  std::enable_if_t<(sizeof...(System) >= 1)>
+    void Registry::addSystem(System&& ... s) {
+        (addSystem(std::forward<System>(s)), ...);
+    }
+    
+    template <SystemImplementation System, typename... Args>
+    void Registry::emplaceSystem(Args&&... args) {
+        systems[std::type_index(typeid(System))] = std::make_unique<System>(std::forward<Args>(args)...);
+    }
+
+    template <SystemImplementation ... System, typename>
     void Registry::removeSystem() {
-        auto type = std::type_index(typeid(T));
-        systems.erase(type);
+        (systems.erase(std::type_index(typeid(System))), ...);
     }
 
-    template <typename T>
+    template <SystemImplementation ... System, typename>
     void Registry::callSystem() {
-        systems[std::type_index(typeid(T))]->lambda(*this);
+        (systems[std::type_index(typeid(System))]->update(*this), ...);
     }
-
-    void Registry::callSystems() {
-        for (auto& [type, system] : systems) {
-            system->lambda(*this);
-        }
-    }
-
 }
 
 #endif // REGISTRY_IMPL_HPP
