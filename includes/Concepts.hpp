@@ -3,6 +3,9 @@
  * @author Perry Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-10-08
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #pragma once
@@ -22,4 +25,5 @@ template <typename... Args>
 struct is_tuple<std::tuple<Args...>> : std::true_type {};
 
 template <typename T>
-concept IsTuple = is_tuple<T>::value;
+concept IsTuple = is_tuple<T>::value;/** @} */
+

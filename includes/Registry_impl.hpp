@@ -3,6 +3,9 @@
  * @author @Perry-Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-01-29
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef REGISTRY_IMPL_HPP
@@ -94,5 +97,7 @@ namespace ecs {
         (systems[std::type_index(typeid(System))]->update(*this), ...);
     }
 }
+
+/** @} */
 
 #endif // REGISTRY_IMPL_HPP

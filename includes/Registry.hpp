@@ -3,6 +3,9 @@
  * @author @Perry-chouteau (perry.chouteau@outook.com)
  * @brief 
  * @date 2025-01-27
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef REGISTRY_HPP
@@ -215,5 +218,7 @@ namespace ecs {
     };
 
 }
+
+/** @} */
 
 #endif // REGISTRY_HPP

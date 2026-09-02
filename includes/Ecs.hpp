@@ -3,6 +3,9 @@
  * @author @Perry-Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-01-29
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef ECS_HPP
@@ -20,5 +23,7 @@ namespace ecs {}
 #include "Entity.hpp"
 #include "Entity_impl.hpp"
 #include "System.hpp"
+
+/** @} */
 
 #endif /* !ECS_HPP */

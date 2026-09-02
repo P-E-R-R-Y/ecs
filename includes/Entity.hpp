@@ -3,6 +3,9 @@
  * @author @Perry-Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-01-29
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef ENTITY_HPP
@@ -74,5 +77,7 @@ namespace ecs {
             RegistryRef _ecs;
     };
 }
+
+/** @} */
 
 #endif // ENTITY_HPP

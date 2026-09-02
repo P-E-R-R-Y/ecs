@@ -3,6 +3,9 @@
  * @author @Perry-Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-01-29
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef SYSTEM_HPP
@@ -56,5 +59,7 @@ namespace ecs {
 
 }
 
+
+/** @} */
 
 #endif // SYSTEM_HPP

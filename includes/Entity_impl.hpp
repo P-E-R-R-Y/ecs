@@ -3,6 +3,9 @@
  * @author @Perry-Chouteau (perry.chouteau@outlook.com)
  * @brief 
  * @date 2025-01-29
+ *
+ * @addtogroup ecs
+ * @{
  */
 
 #ifndef ENTITY_IMPL_HPP
@@ -30,5 +33,7 @@ namespace ecs {
         (_ecs.removeComponent<Component>(*this), ...);
     }
 }
+
+/** @} */
 
 #endif // ENTITY_IMPL_HPP

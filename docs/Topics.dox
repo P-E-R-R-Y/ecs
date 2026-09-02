@@ -1,0 +1,9 @@
+/**
+ * @defgroup ecs ecs
+ *
+ * @brief Entity-Component-System : entities hold no data, components are
+ *        plain structs, systems do the work.
+ *
+ * Registry owns the components in a SparseArray per type, Entity is an
+ * index into it, ISystem operates on whatever combination it declares.
+ */
