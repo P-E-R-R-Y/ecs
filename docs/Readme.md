@@ -1,4 +1,6 @@
-# ⚛️ P-E-R-R-Y ECS  
+# ecs
+
+⚛️ **P-E-R-R-Y ECS**
 
 A modern, lightweight **Entity-Component-System** framework in C++.
 
