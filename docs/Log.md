@@ -1,10 +1,10 @@
-# ecs — journal
+# ecs — changelog
 
-Marqueurs : 🟢 ajout · 🔴 rupture · 🔵 correctif · ⚪ interne ou doc · 🟡 propose
-dans le plan, code non ecrit.
+Markers: 🟢 added · 🔴 breaking · 🔵 fix · ⚪ internal or docs · 🟡 proposed
+in the plan, no code written yet.
 
 ## v1.0.1
 
-- 🟢 `Registry`, `Entity`, `SparseArray<T>` a creneaux `std::optional`
-- 🟢 `ISystem`, `killEntity` avec recyclage d'indices
-- ⚪ `@addtogroup` sur les en-tetes, rien en API
+- 🟢 `Registry`, `Entity`, `SparseArray<T>` with `std::optional` slots
+- 🟢 `ISystem`, `killEntity` with index recycling
+- ⚪ `@addtogroup` on the headers, nothing in the API
